@@ -6,19 +6,50 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 // get all products
 router.get('/', (req, res) => {
   // find all products
-  Product.findAll().then((productData) => {
-    res.json(productData);
-  })
-  // be sure to include its associated Category and Tag data
+  // Product.findAll().then((productData) => {
+  //   res.json(productData);
+  // })
+  Product.findAll(
+    {
+      include: [
+        {
+          model: Category,
+          attributes: ["category_name"]
+        },
+        {
+          model: Tag,
+          attributes: ["tag_name"]
+        }
+      ]
+    }
+  )
+    .then((productData) => {
+      res.json(productData);
+    })
 });
 
 // get one product
 router.get('/:id', (req, res) => {
   // find a single product by its `id`
-  Product.findByPk(req.params.id).then((productData) => {
-    res.json(productData);
-  })
-  // be sure to include its associated Category and Tag data
+  // Product.findByPk(req.params.id).then((productData) => {
+  //   res.json(productData);
+  // })
+  const options = {
+    includes: [
+      {
+        model: Category,
+        attributes: ["category_name"]
+      },
+      {
+        model: Tag,
+        attributes: ["tag_name"]
+      }
+    ]
+  };
+  Product.findByPk(req.params.id, options)
+    .then((productData) => {
+      res.json(productData);
+    })
 });
 
 // create new product
